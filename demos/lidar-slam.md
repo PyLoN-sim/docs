@@ -1,5 +1,7 @@
 # 2D LiDARとSLAM
 
+先に[共通準備](index.md)で本体とdemosをcloneしてください。コマンドはPyLoN本体のルートで実行します。
+
 2D LiDARから平面の自己位置を推定し、SLAM Toolboxで地図を作成します。作成した地図の保存、AMCLによる位置推定、RVizのNav2 Goalによる走行までを試せます。
 
 ## 1. デモをインストールする
@@ -10,7 +12,7 @@
 source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths \
   Ros2/pylon_interfaces Ros2/pylon_bridge Ros2/pylon_vehicle_control \
-  Demo/pylon_demo_lidar_slam \
+  ../demos/pylon_demo_lidar_slam \
   --ignore-src --rosdistro jazzy -y
 ./sync.sh --skip-ksp-build --skip-ksp-sync --demo lidar_slam
 source ~/ros2_ws/install/setup.bash

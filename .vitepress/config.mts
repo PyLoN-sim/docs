@@ -1,8 +1,9 @@
 import { defineConfig } from 'vitepress'
 
-const ogImage = 'https://raw.githubusercontent.com/Ampoi/pylon/master/Assets/OGP.png'
+const ogImage = 'https://raw.githubusercontent.com/PyLoN-sim/PyLoN/main/Assets/OGP.png'
 
 export default defineConfig({
+  srcExclude: ['README.md'],
   lang: 'ja-JP',
   title: 'PyLoN Docs',
   description: 'PyLoN KSP mod と ROS2 bridge の起動・Topic・パーツ設定リファレンス',
@@ -27,6 +28,8 @@ export default defineConfig({
   },
   themeConfig: {
     siteTitle: 'PyLoN Docs',
+    socialLinks: [{ icon: 'github', link: 'https://github.com/PyLoN-sim/docs' }],
+    editLink: { pattern: 'https://github.com/PyLoN-sim/docs/edit/main/:path', text: 'GitHubで編集' },
     nav: [
       { text: '導入ガイド', link: '/guide/getting-started' },
       { text: 'デモ', link: '/demos/' },

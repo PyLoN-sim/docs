@@ -46,10 +46,11 @@ KSP側だけ、またはROS2側だけを変更した場合は範囲を指定で�
 
 ## ドキュメントの編集
 
-Node.jsとpnpmを用意し、リポジトリのルートから実行します。
+Node.js 22とpnpm 10を用意し、独立したdocsリポジトリで実行します。
 
 ```bash
-cd docs
+git clone https://github.com/PyLoN-sim/docs.git ~/src/docs
+cd ~/src/docs
 pnpm install --frozen-lockfile
 pnpm run docs:dev
 ```
@@ -61,6 +62,6 @@ pnpm run docs:build
 pnpm run docs:preview
 ```
 
-ビルド時にリンク切れを確認し、プレビューでナビゲーションとコード例の表示を確認します。公開設定は`docs/`にあり、VercelのRoot DirectoryとCLIの作業ディレクトリも`docs`です。
+ビルド時にリンク切れを確認し、プレビューでナビゲーションとコード例の表示を確認します。公開設定はdocsリポジトリのルートにあり、VercelのRoot Directoryは`.`、CLIの作業ディレクトリもこのリポジトリのルートです。
 
 利用者向けのページには導入・アプリケーション開発・APIの使い方を記載します。本体への貢献手順と内部設計は、この末尾セクションにまとめます。

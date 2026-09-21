@@ -11,7 +11,18 @@ PyLoNのセンサーと制御APIを使うサンプルアプリケーションで
 | [月面Nav2](mun-nav2.md) | 局所地図の生成、RVizのゴールへの自律走行 | Mun上の前輪操舵ローバー、3D LiDAR | launchが起動 |
 | [衛星分離・逆噴射着陸](reusable-launch.md) | Lifecycleによる打ち上げ・分離・帰還管理（実飛行未検証） | 同梱のPyLoN Phoenix | launchが起動 |
 
-リポジトリには、3D LiDARだけで6DoF位置を推定する`pylon_demo_position_estimator`もあります。起動手順は`Demo/pylon_demo_position_estimator/README.md`を参照してください。
+リポジトリには、3D LiDARだけで6DoF位置を推定する`pylon_demo_position_estimator`もあります。起動手順は`../demos/pylon_demo_position_estimator/README.md`を参照してください。
+
+## リポジトリの準備
+
+デモ実装は[PyLoN-sim/demos](https://github.com/PyLoN-sim/demos)に分かれています。本体と同じ親ディレクトリへcloneします。以下の各ガイドのコマンドは`~/src/PyLoN`で実行します。
+
+```bash
+git clone https://github.com/PyLoN-sim/demos.git ~/src/demos
+cd ~/src/PyLoN
+```
+
+別の場所へ置く場合は`PYLON_DEMOS_DIR`とコマンド中の`../demos`を実際の場所に合わせてください。
 
 ## 共通の準備
 
@@ -31,7 +42,7 @@ source ~/ros2_ws/install/setup.bash
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-rosdep install --from-paths Ros2 Demo --ignore-src --rosdistro jazzy -y
+rosdep install --from-paths Ros2 ../demos --ignore-src --rosdistro jazzy -y
 ./sync.sh --skip-ksp-build --skip-ksp-sync --all-demos
 source ~/ros2_ws/install/setup.bash
 ```

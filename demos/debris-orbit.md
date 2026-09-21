@@ -1,5 +1,7 @@
 # 軌道上のデブリ周回・撮影
 
+先に[共通準備](index.md)で本体とdemosをcloneしてください。コマンドはPyLoN本体のルートで実行します。
+
 3D LiDARとIMUで近くのデブリとの相対運動を推定し、RCSで周回しながら機体カメラで撮影します。KSPの通常操作で軌道投入・分離を済ませた状態から始めます。
 
 ## 1. デモをインストールする
@@ -10,7 +12,7 @@
 source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths \
   Ros2/pylon_interfaces Ros2/pylon_bridge Ros2/pylon_vehicle_control \
-  Demo/pylon_demo_debris_orbit \
+  ../demos/pylon_demo_debris_orbit \
   --ignore-src --rosdistro jazzy -y
 ./sync.sh --skip-ksp-build --skip-ksp-sync --demo debris_orbit
 source ~/ros2_ws/install/setup.bash
@@ -99,4 +101,4 @@ ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/controller_status
 | `controller_enabled` | `true`（既定） | 共通制御器を起動 |
 | `config_file` | パッケージ同梱YAML | 推定・誘導・撮影設定を変更 |
 
-設定ファイルはリポジトリの`Demo/pylon_demo_debris_orbit/config/pylon_demo_debris_orbit.yaml`です。機体への指令と所有権は[機体制御API](../api/vehicle-control.md)、画像の設定は[RGBカメラ](../parts/camera.md)を参照してください。
+設定ファイルはリポジトリの`../demos/pylon_demo_debris_orbit/config/pylon_demo_debris_orbit.yaml`です。機体への指令と所有権は[機体制御API](../api/vehicle-control.md)、画像の設定は[RGBカメラ](../parts/camera.md)を参照してください。

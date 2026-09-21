@@ -1,12 +1,14 @@
 # 衛星分離・逆噴射着陸
 
+先に[共通準備](index.md)で本体とdemosをcloneしてください。コマンドはPyLoN本体のルートで実行します。
+
 専用の無人機 **PyLoN Phoenix** を打ち上げ、衛星を分離した後、回収機を逆噴射で着陸させるデモです。Space ROSのコンテナで動作し、ROS 2のmanaged lifecycle、期限付き制御権、ミッション状態機械、診断Topicを組み合わせます。
 
 KSP 1.12.5とSpace ROSで、`hop`の打ち上げ・高度約1.5 kmでの分離・逆噴射・上空での横移動停止・自立着陸・完了判定まで実飛行を確認しています。尾翼付き機体でも約78.2 × 81.0 kmへの軌道投入と衛星分離を確認しました。周回軌道からの帰還は検証中で、発射場への精密帰還を保証するものではありません。
 
 ## 機体
 
-`PyLoN Phoenix.craft`は、stockパーツ32個の単段式ロケットです。機体ファイルはリポジトリの`Demo/pylon_demo_reusable/craft/PyLoN Phoenix.craft`にあります。
+`PyLoN Phoenix.craft`は、stockパーツ32個の単段式ロケットです。機体ファイルはリポジトリの`../demos/pylon_demo_reusable/craft/PyLoN Phoenix.craft`にあります。
 
 | 系統 | 構成・意図 |
 |---|---|
@@ -25,7 +27,7 @@ KSPを終了してから、使用するセーブのVABへコピーします。�
 ```bash
 KSPDIR="$HOME/.local/share/Steam/steamapps/common/Kerbal Space Program"
 SAVE='ROS2 debug'  # 使用するsandboxセーブのフォルダー名
-cp -n 'Demo/pylon_demo_reusable/craft/PyLoN Phoenix.craft' \
+cp -n '../demos/pylon_demo_reusable/craft/PyLoN Phoenix.craft' \
   "$KSPDIR/saves/$SAVE/Ships/VAB/"
 ```
 
@@ -37,9 +39,9 @@ MODを更新したらKSPを再起動してください。
 
 ```bash
 ./sync.sh --demo reusable
-./spaceros.sh build
-./spaceros.sh test
-./spaceros.sh demo
+../demos/pylon_demo_reusable/spaceros.sh build
+../demos/pylon_demo_reusable/spaceros.sh test
+../demos/pylon_demo_reusable/spaceros.sh demo
 ```
 
 `demo`はbridgeとmission nodeを起動し、missionを`inactive`までconfigureします。同じKSPへ接続する別のbridgeは、先に停止してください。
@@ -47,10 +49,10 @@ MODを更新したらKSPを再起動してください。
 別ターミナルで準備状態を確認し、明示的にactivateすると打ち上げます。
 
 ```bash
-./spaceros.sh exec ros2 lifecycle get /reusable_mission
-./spaceros.sh exec ros2 topic echo --once /reusable_mission/status
-./spaceros.sh exec ros2 lifecycle set /reusable_mission activate
-./spaceros.sh exec ros2 topic echo /reusable_mission/events
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle get /reusable_mission
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 topic echo --once /reusable_mission/status
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission activate
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 topic echo /reusable_mission/events
 ```
 
 statusの`preflight`が空文字であれば準備完了です。`waiting_for_flight_state`のままの場合は、新しいDLLがロードされているか、bridgeのGround Truthが有効か確認します。
@@ -101,7 +103,7 @@ stateDiagram-v2
 姿勢・分離・着陸の確認には`hop`を選べます。
 
 ```bash
-./spaceros.sh demo profile:=hop
+../demos/pylon_demo_reusable/spaceros.sh demo profile:=hop
 ```
 
 同じactivate操作で約1,500 m上昇し、頂点付近で模擬衛星を分離して回収機を着陸させます。こちらは衛星を周回軌道へ投入しません。分離した模擬衛星も落下します。`COAST → DEPLOY → CLEARANCE → ENTRY → APPROACH → LANDING`と進み、軌道投入・帰還待機を省略します。
@@ -125,18 +127,18 @@ KSP側の制御権leaseは1秒、指令の有効期間は0.3秒です。ROS側�
 ## 停止・再試行
 
 ```bash
-./spaceros.sh exec ros2 lifecycle set /reusable_mission deactivate
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission deactivate
 # または
-./spaceros.sh exec ros2 service call /reusable_mission/abort std_srvs/srv/Trigger '{}'
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 service call /reusable_mission/abort std_srvs/srv/Trigger '{}'
 ```
 
 KSPで新しいPhoenixを発射台へ戻してから:
 
 ```bash
-./spaceros.sh exec ros2 lifecycle set /reusable_mission deactivate
-./spaceros.sh exec ros2 lifecycle set /reusable_mission cleanup
-./spaceros.sh exec ros2 lifecycle set /reusable_mission configure
-./spaceros.sh exec ros2 lifecycle set /reusable_mission activate
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission deactivate
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission cleanup
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission configure
+../demos/pylon_demo_reusable/spaceros.sh exec ros2 lifecycle set /reusable_mission activate
 ```
 
 記録には、ホストのROS 2から次のTopicをrosbagへ保存できます。

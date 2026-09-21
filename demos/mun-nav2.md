@@ -1,5 +1,7 @@
 # 月面Nav2
 
+先に[共通準備](index.md)で本体とdemosをcloneしてください。コマンドはPyLoN本体のルートで実行します。
+
 前輪操舵または前後輪操舵のローバーをMunに配置し、RVizのNav2 Goalで指定した位置と向きへ走行させます。3D LiDAR、IMU、車輪情報から自己位置と通行可能な地面を推定します。
 
 ## 1. デモをインストールする
@@ -10,7 +12,7 @@
 source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths \
   Ros2/pylon_interfaces Ros2/pylon_bridge Ros2/pylon_vehicle_control \
-  Ros2/pylon_perception Demo/pylon_demo_mun_rover \
+  Ros2/pylon_perception ../demos/pylon_demo_mun_rover \
   --ignore-src --rosdistro jazzy -y
 ./sync.sh --skip-ksp-build --skip-ksp-sync --demo mun_rover
 source ~/ros2_ws/install/setup.bash

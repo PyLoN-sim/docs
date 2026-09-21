@@ -79,7 +79,7 @@ command -v rosdep
 
 ```bash
 mkdir -p ~/src
-git clone https://github.com/Ampoi/KSP_ROS2.git ~/src/PyLoN
+git clone https://github.com/PyLoN-sim/PyLoN.git ~/src/PyLoN
 cd ~/src/PyLoN
 
 export KSPDIR="$HOME/.local/share/Steam/steamapps/common/Kerbal Space Program"
@@ -119,7 +119,7 @@ rosdep install --from-paths \
 
 ## 4. MODとROS2パッケージをビルド・インストールする
 
-配布版MODを使う場合は、[Releases](https://github.com/Ampoi/KSP_ROS2/releases)の`PyLoN-vX.Y.Z.zip`を展開し、`GameData/PyLoN`をKSPの`GameData`へコピーします。「Source code」アーカイブにはビルド済みMODは含まれません。更新前にインストール先の`Config/Runtime.cfg`を控えてください。ROS2側だけをビルド・同期するには`./sync.sh --skip-ksp-build --skip-ksp-sync`を使います。
+配布版MODを使う場合は、[Releases](https://github.com/PyLoN-sim/PyLoN/releases)の`PyLoN-vX.Y.Z.zip`を展開し、`GameData/PyLoN`をKSPの`GameData`へコピーします。「Source code」アーカイブにはビルド済みMODは含まれません。更新前にインストール先の`Config/Runtime.cfg`を控えてください。ROS2側だけをビルド・同期するには`./sync.sh --skip-ksp-build --skip-ksp-sync`を使います。
 
 以下はMODもソースからビルドする場合の手順です。
 
