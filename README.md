@@ -17,6 +17,38 @@ pnpm run docs:preview
 
 ## 公開設定
 
-`vercel.json`を同梱しています。Vercelに接続する場合はリポジトリを`PyLoN-sim/docs`、Root Directoryをリポジトリルート（`.`）、出力を`.vitepress/dist`に指定します。GitHub Actionsではリンク検査を含む静的ビルドを実行します。
+Cloudflare Workers Static Assetsで、既存の独自ドメイン `https://pylon.ampoi.dev` に公開します。`wrangler.jsonc` が配信設定です。サーバー側のWorkerコードは使わず、VitePressの生成物 `.vitepress/dist` を配信します。静的アセットの配信と保存はCloudflareの無料枠で運用できます（ドメイン更新料は別途）。
+
+`public/_redirects` で `/` から `/guide/overview` へ転送します。拡張子なしのURLとディレクトリの `index.html` に対応し、存在しないページにはVitePressの404ページを返します。
+
+### GitHub Actions
+
+- PRでは依存関係を固定してインストールし、リンク検査を含むビルドとWranglerのドライランを実行します。
+- `main` へのpush、または `main` を選んだ手動実行では、検証済みのビルド成果物をCloudflareへデプロイします。本番デプロイは直列に実行します。
+- 公開リポジトリの標準GitHubホストランナーを使用し、成果物の保存期間は1日です。
+
+GitHubリポジトリの Settings → Secrets and variables → Actions に次のrepository secretsを登録してください。
+
+| 名前 | 値 |
+| --- | --- |
+| `CLOUDFLARE_ACCOUNT_ID` | 公開先のCloudflareアカウントID |
+| `CLOUDFLARE_API_TOKEN` | 対象アカウントのWorkers Scripts編集権限、および `ampoi.dev` のZone読み取り・Workers Routes編集権限を持つAPIトークン |
+
+APIトークンは対象アカウント・ゾーンに限定し、リポジトリやログに書かないでください。PRの検証ではsecretsを使いません。
+
+### 初回移行・手動公開
+
+```bash
+pnpm exec wrangler login
+pnpm run docs:build
+pnpm run docs:deploy:check
+pnpm run docs:preview:cloudflare
+# ローカル確認後に公開
+pnpm run docs:deploy
+```
+
+初回は `ampoi.dev` がCloudflareの有効なゾーンであることを確認します。既存のVercel向けCNAMEがある場合は設定を控え、Cloudflareの仮URLで確認した後にカスタムドメインへ切り替えます。CloudflareのCustom DomainがDNSと証明書を管理します。移行後はVercelのGit連携を解除し、二重デプロイを止めます。`vercel.json` は切り戻し用に残しています。
+
+参考: [静的配信の料金](https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/)、[GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/)、[Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/)。
 
 本体やdemosのcloneはドキュメントのビルドに不要です。[MIT License](LICENSE)。

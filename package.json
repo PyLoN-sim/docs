@@ -5,9 +5,13 @@
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "docs:deploy": "wrangler deploy",
+    "docs:deploy:check": "wrangler deploy --dry-run",
+    "docs:preview:cloudflare": "wrangler dev"
   },
   "devDependencies": {
-    "vitepress": "1.6.4"
+    "vitepress": "1.6.4",
+    "wrangler": "4.140.0"
   }
 }
