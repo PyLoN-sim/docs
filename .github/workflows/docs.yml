@@ -60,3 +60,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify public documentation
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 5 --max-time 30 https://pylon.ampoi.dev/guide/overview -o /dev/null
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 5 --max-time 30 https://pylon.ampoi.dev/api/topics -o /dev/null

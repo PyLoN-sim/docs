@@ -24,7 +24,7 @@ Cloudflare Workers Static Assetsで、既存の独自ドメイン `https://pylon
 ### GitHub Actions
 
 - PRでは依存関係を固定してインストールし、リンク検査を含むビルドとWranglerのドライランを実行します。
-- `main` へのpush、または `main` を選んだ手動実行では、検証済みのビルド成果物をCloudflareへデプロイします。本番デプロイは直列に実行します。
+- `main` へのpush、または `main` を選んだ手動実行では、検証済みのビルド成果物をCloudflareへデプロイし、公開URLの概要・Topic一覧のHTTP応答を確認します。本番デプロイは直列に実行します。
 - 公開リポジトリの標準GitHubホストランナーを使用し、成果物の保存期間は1日です。
 
 GitHubリポジトリの Settings → Secrets and variables → Actions に次のrepository secretsを登録してください。
