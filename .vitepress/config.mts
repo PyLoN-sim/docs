@@ -28,7 +28,7 @@ export default defineConfig({
   },
   themeConfig: {
     siteTitle: 'PyLoN Docs',
-    socialLinks: [{ icon: 'github', link: 'https://github.com/PyLoN-sim/docs' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/PyLoN-sim/PyLoN', ariaLabel: 'PyLoN本体のGitHubリポジトリ' }],
     editLink: { pattern: 'https://github.com/PyLoN-sim/docs/edit/main/:path', text: 'GitHubで編集' },
     nav: [
       { text: '導入ガイド', link: '/guide/getting-started' },
