@@ -49,6 +49,12 @@ source ~/ros2_ws/install/setup.bash
 
 この同期は、Getting Startedでインストール済みのMODを使ってROS2側を追加する手順です。MODも更新するときはKSPを終了し、`./sync.sh --all-demos`を実行してから再起動します。
 
+## 環境と機体を選ぶ
+
+初回は[環境別の読む順序](../guide/getting-started.md#choose-environment)を確認し、[最小受信機体](../guide/minimal-receiver.md)で通信を確認してからデモ用機体へ進みます。Space ROSのbridgeとホストJazzyのデモを併用する場合は、[併用設定](../guide/space-ros.md#ホストのros-2から使う)に従い、ホスト側でbridgeを二重起動しないでください。
+
+デブリ周回では`.craft`の読み込みだけでは初期状態は揃いません。[分離前・分離後の保存と開始条件](debris-orbit.md#分離前の状態を保存する)を確認してください。
+
 ## Sensor IDと起動順
 
 各ページの`front_lidar`や`orbit_camera`は例です。VAB/SPHのパーツ右クリックメニューにある`Edit ROS2 Sensor ID`で設定するか、launch引数を実際のIDへ変更してください。

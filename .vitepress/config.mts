@@ -43,6 +43,7 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/guide/getting-started' },
           { text: 'Space ROSで動かす', link: '/guide/space-ros' },
+          { text: '最小受信確認用機体', link: '/guide/minimal-receiver' },
           { text: 'システム概要', link: '/guide/overview' },
           { text: 'ROS2アプリケーションを作る', link: '/guide/application-development' },
         ]

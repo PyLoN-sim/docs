@@ -9,6 +9,18 @@ PyLoNを初めて使うための導入手順です。**Ubuntu 24.04の同じPC�
 
 最初に必要なソフトを導入し、PyLoNのソースからMODとROS2パッケージをビルドします。コマンドはbash用です。すでに完了している準備は飛ばしてください。
 
+## 最初に実行環境を選ぶ {#choose-environment}
+
+| 使う構成 | 読む順序 | ホストに必要なROS |
+| --- | --- | --- |
+| Jazzyだけ | このページの1〜7 → [アプリケーション開発](application-development.md)または[デモ](../demos/index.md) | ROS 2 Jazzy |
+| Space ROSだけ | このページの「Ubuntu・Steam/KSPの前提」と手順2 → [Space ROSの準備・ビルド・起動](space-ros.md) → [最小受信機体](minimal-receiver.md) | 不要。ROSコマンドはコンテナ内で実行 |
+| Space ROSのbridge＋ホストJazzyのアプリ・RViz | まずこのページの1〜7でJazzyの受信を確認 → ホストbridgeを終了 → [Space ROS](space-ros.md) → 同ページの「ホストのROS 2から使う」 | ROS 2 Jazzyと同じ版の`pylon_interfaces` |
+
+Space ROSだけを使う場合は、このページのホスト向けROSインストール・rosdep・通常の`./sync.sh`・ホストbridge起動を飛ばします。ホストにはKSPとMODを置き、MODをソースから作る場合だけ.NET SDKとビルドツールを用意します。配布済みMODを使う場合は.NET SDKも不要です。
+
+併用時もKSPのUDPを受け取るbridgeは**1つ**です。ホストとコンテナで同じ49010/UDPを同時にbindしません。ビルド成果物も共用せず、各環境でビルドします。
+
 ## 1. 必要なものを準備する
 
 | 必要なもの | この手順での用途 |
@@ -19,7 +31,23 @@ PyLoNを初めて使うための導入手順です。**Ubuntu 24.04の同じPC�
 | .NET SDK 8.0 | KSP用の`PyLoN.dll`をビルド |
 | Git、ビルドツール、colcon、rosdep、rsync | ソース取得、依存解決、ビルド、インストール |
 
-この手順はKSP 1.x向けです。KSP 2には対応しません。最初の動作確認にはKSPのSandboxセーブを使うと、パーツの研究・購入を省けます。Steam版ならライブラリからKSPをインストールし、通常起動できることを確認して、いったん終了してください。
+### Ubuntu・Steam/KSPの前提
+
+このガイドは**Ubuntu Desktop 24.04 LTS・x86_64上で、Linux版KSP 1.xとbridgeを同じPCで動かす構成**を対象にします。KSP 1.12.5での既存デモ記録があります。KSP 2、Windows版をProtonで動かす構成、WSL、仮想マシン、ARM機は、このページの確認対象に含めません。UbuntuのインストールとGUIでKSPを起動できる状態までは先に準備してください。
+
+KSP本体はPyLoNに含まれません。[SteamのKSP製品ページ](https://store.steampowered.com/app/220200/Kerbal_Space_Program/)などで別途用意します。以下ではSteam版の配置を例にしますが、Steamを経由しないLinux版でも`KSPDIR`を実際の場所へ合わせれば同じビルド手順を使えます。最小受信機体はstockパーツとPyLoNだけを使い、DLCや他のMODは必要ありません。
+
+1. SteamでKSPをインストールし、Linux版を通常起動します。互換性設定でProtonを強制している場合はLinux版の構成へ戻します。
+2. タイトル画面でKSPのバージョンを控え、新しい**Sandbox**セーブを`PyLoN Receive`などの名前で作ります。VAB（ロケット組立棟）へ入れることを確認します。
+3. KSPを終了します。MODのコピー・更新はゲームを終了した状態で行います。
+4. Steamの「管理」→「ローカルファイルを閲覧」でインストール先を確認します。別ドライブやFlatpak版Steamでは既定のパスと異なるため、手順2の`KSPDIR`へ実際のパスを設定します。
+
+```bash
+cat /etc/os-release  # Ubuntu、VERSION_ID="24.04"を確認
+uname -m            # x86_64を確認
+```
+
+ROS 2 JazzyのUbuntu向けバイナリも24.04を対象にしています（[公式インストール手順](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)）。別のUbuntu版にこのページのaptコマンドをそのまま適用しないでください。
 
 RVizでの可視化やデモの実行環境は、受信確認の後に追加できます。
 
@@ -197,15 +225,9 @@ bridgeはデータの中継を担当します。この起動だけでは機体�
 
 ## 6. KSPでセンサーを載せた機体を出す
 
-KSPを通常起動し、SandboxセーブのVABまたはSPHで次の操作をします。
+[最小受信確認用機体「PyLoN Receiver」](minimal-receiver.md)を組み立てます。Mk1ランダー缶、Z-100バッテリー、PyLoN LiDAR 3Dの**3パーツ**を使う、発射台に置いたまま受信するための機体です。リンク先に取り付け位置・Sensor ID・確認条件をまとめています。
 
-1. 操作可能なコマンドポッドまたはプローブと電源を持つ、静止確認用の機体を作る。
-2. Utilityカテゴリで`PyLoN LiDAR 3D`を探して取り付ける。検索欄では`PyLoN`を使える。
-3. パーツを右クリックし、`Edit ROS2 Sensor ID`からIDを`front_lidar`にする。
-4. LiDARの視野が地面や周囲の構造物を向くようにし、機体自身のパーツで覆わない。
-5. 機体を保存し、LaunchしてFlight画面へ移る。ポーズを解除し、通常速度で動かす。
-
-Sensor IDはTopicの一部になります。自動生成されたIDのままでも使えますが、以下の例では`front_lidar`に揃えます。同一機体の各センサーには異なるIDを付けてください。右クリックメニューの`LiDAR`と`UDP`が有効になっていることも確認します。
+保存後にLaunchでFlightへ移り、ポーズ解除・通常速度（1倍）にしてください。点火・分離・周回デモはまだ実行しません。Sensor IDは以下のコマンドと一致する`front_lidar`を使います。
 
 センサーパーツがなくても、操作機体のlifecycle・IMU・機体モデルは独立して配信されます。LiDARとカメラのTopicは、対応するセンサーから最初のデータを受信した時点で作成されます。
 

@@ -4,6 +4,13 @@ PyLoNのbridgeと機体制御パッケージを、公式Space ROSのコンテナ
 
 対象はLinux x86_64です。公式の`osrf/space-ros:jazzy-2026.07.0`をdigest付きで固定し、コンテナ内の`/opt/ros/spaceros`にあるROSライブラリを使用します。ホストの`~/ros2_ws`とは別のビルド成果物になります。
 
+## このページを読む順序
+
+- **Space ROSだけ**： [Getting Startedの前提](getting-started.md#ubuntu・steam-kspの前提)でUbuntu・KSPを準備し、同ページの手順2でPyLoNをcloneして`KSPDIR`を設定 → このページの準備・ビルド・起動 → [最小受信機体](minimal-receiver.md)。ホストへのJazzyインストール、ホストのrosdep・colconは不要です。
+- **Jazzyと併用**：Getting Startedで受信確認 → ホストbridgeを終了 → このページでSpace ROSのbridgeを起動 → 「ホストのROS 2から使う」でアプリ・RVizを接続します。
+
+KSPは両構成ともホストで起動します。Space ROSのコンテナにKSP本体は含まれません。MODをソースから作る場合はGetting Startedの.NET SDKと基本ツールも必要です。配布済みMODを導入する場合はMODのビルドを省けます。
+
 ## 準備
 
 UbuntuでDockerが未導入の場合:
@@ -38,7 +45,7 @@ KSPのMOD導入は[Getting Started](getting-started.md)を参照してくださ�
 
 `run`はUDPポート49010で待ち受け、指令を49011へ返送します。ホスト側のbridgeを停止してから起動してください。Linuxのhost networkを使用するので、KSPの`stateHost`とbridgeの`--command-host`は`127.0.0.1`のままで接続できます。
 
-KSPでセンサー付き機体のFlightを開きます。別ターミナルから確認できます。
+[最小受信機体](minimal-receiver.md)を作ってFlightを開きます。別ターミナルもPyLoNリポジトリのルートへ移動し、次を実行します。点群を含む合格条件は最小機体のページにあります。
 
 ```bash
 ./spaceros.sh exec ros2 topic list --no-daemon
@@ -65,6 +72,10 @@ export ROS_DOMAIN_ID=0
 export ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST
 ros2 topic list --no-daemon
 ```
+
+UDPはSpace ROSのbridgeだけが受信し、ホストのアプリとRVizはDDS経由でTopicを購読します。ホストで`udp_bridge`をもう一度起動しないでください。`~/ros2_ws`とコンテナ内のワークスペースを重ねてsourceしたり、`build/`・`install/`を共有したりせず、同じソースリビジョンから各環境用にビルドします。
+
+デブリ周回などJazzy向けlaunchを使うデモは、ホストでそのデモをビルドして起動します。本体の`./spaceros.sh build`にはデモは含まれません。Space ROSだけでデモも動かす場合は、各デモに専用のSpace ROS手順があるか確認してください。
 
 ホストでPyLoNの独自メッセージを扱う場合は、同じソースからビルドした`pylon_interfaces`が必要です。ホスト側のワークスペース更新には従来どおり`./sync.sh --skip-ksp-build --skip-ksp-sync`を使えます。
 
