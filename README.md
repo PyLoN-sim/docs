@@ -32,7 +32,7 @@ GitHubリポジトリの Settings → Secrets and variables → Actions に次�
 | 名前 | 値 |
 | --- | --- |
 | `CLOUDFLARE_ACCOUNT_ID` | 公開先のCloudflareアカウントID |
-| `CLOUDFLARE_API_TOKEN` | 対象アカウントのWorkers Scripts編集権限、および `ampoi.dev` のZone読み取り・Workers Routes編集権限を持つAPIトークン |
+| `CLOUDFLARE_TOKEN` | 対象アカウントのWorkers Scripts編集権限、および `ampoi.dev` のZone読み取り・Workers Routes編集権限を持つAPIトークン（Wranglerには `CLOUDFLARE_API_TOKEN` として渡します） |
 
 APIトークンは対象アカウント・ゾーンに限定し、リポジトリやログに書かないでください。PRの検証ではsecretsを使いません。
 
