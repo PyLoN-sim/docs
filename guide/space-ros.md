@@ -6,10 +6,11 @@ PyLoNのbridgeと機体制御パッケージを、公式Space ROSのコンテナ
 
 ## このページを読む順序
 
-- **Space ROSだけ**： [Getting Startedの前提](getting-started.md#ubuntu・steam-kspの前提)でUbuntu・KSPを準備し、同ページの手順2でPyLoNをcloneして`KSPDIR`を設定 → このページの準備・ビルド・起動 → [最小受信機体](minimal-receiver.md)。ホストへのJazzyインストール、ホストのrosdep・colconは不要です。
-- **Jazzyと併用**：Getting Startedで受信確認 → ホストbridgeを終了 → このページでSpace ROSのbridgeを起動 → 「ホストのROS 2から使う」でアプリ・RVizを接続します。
+- **Space ROSだけ**： [Getting Startedの手順1〜3](getting-started.md)でUbuntu・KSP・DockerとMODを準備 → このページのビルド・起動 → [最小受信機体](minimal-receiver.md)。Jazzy用イメージを取得する手順4以降は省けます。
+- **Jazzyコンテナから切り替える**：Getting Startedで受信確認 → `docker stop pylon-jazzy`でbridgeを終了 → このページでSpace ROSのbridgeを起動します。
+- **ホストJazzyのアプリ・RVizと併用**：ホスト側のJazzyと同じソース版のPyLoNパッケージを別途用意し、「ホストのROS 2から使う」で接続します。
 
-KSPは両構成ともホストで起動します。Space ROSのコンテナにKSP本体は含まれません。MODをソースから作る場合はGetting Startedの.NET SDKと基本ツールも必要です。配布済みMODを導入する場合はMODのビルドを省けます。
+KSPはどの構成でもホストで起動します。Space ROSのコンテナにKSP本体は含まれません。MODをソースから作る場合はGetting Startedの.NET SDKと基本ツールも必要です。配布済みMODを導入する場合はMODのビルドを省けます。
 
 ## 準備
 

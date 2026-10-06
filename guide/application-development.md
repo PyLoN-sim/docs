@@ -2,6 +2,8 @@
 
 [Getting Started](getting-started.md)で機体情報と点群を受信できたら、自分のROS2ノードをPyLoNのTopicへ接続します。センサー処理にはROS2の標準メッセージ、機体・パーツ制御には`pylon_interfaces`を使います。
 
+このページの例はホストのROS 2 Jazzyで実行します。DockerだけでGetting Startedを終えた場合は、先に[ホストのROSアプリを接続する手順](docker.md#ホストのrosアプリ・rvizを接続する)でホストの環境と同じ版の`pylon_interfaces`を用意してください。Topic確認だけなら、起動中のコンテナで`docker exec pylon-jazzy /pylon-entrypoint.sh`に続けてROSコマンドを実行できます。
+
 ## 1. 利用する入出力を選ぶ
 
 [Topic一覧](../api/topics.md)から必要なデータを選び、パーツ別APIでメッセージ型、QoS、座標系、更新周期を確認します。

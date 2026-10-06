@@ -36,7 +36,7 @@ features:
 
 PyLoNを使って、KSPのセンサーデータを処理するROS2ノードや機体を制御するアプリケーションを作るためのドキュメントです。
 
-1. [Getting Startedの環境別の読む順序](/guide/getting-started#choose-environment)からJazzy／Space ROS／併用を選び、[最小受信機体](/guide/minimal-receiver)で機体情報と点群を確認します。
+1. [Getting Started](/guide/getting-started)でMODを導入し、Docker内のJazzyとbridgeを起動して、[最小受信機体](/guide/minimal-receiver)で機体情報と点群を確認します。
 2. [ROS2アプリケーションを作る](/guide/application-development)で、Topicの購読と制御ノードの接続方法を確認します。
 3. [Topic一覧](/api/topics)とパーツ別APIで、必要なメッセージ型・単位・座標系・動作条件を調べます。
 

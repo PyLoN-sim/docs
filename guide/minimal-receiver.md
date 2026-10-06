@@ -1,6 +1,6 @@
 # 最小受信確認用機体
 
-**PyLoN Receiver**は、発射台に置いたままlifecycle・IMU・機体モデル・3D点群を確認するための3パーツ構成です。まず[Getting Started](getting-started.md)または[Space ROS](space-ros.md)でMODとbridgeを導入してください。KSP 1.xのSandboxを使用します。
+**PyLoN Receiver**は、発射台に置いたままlifecycle・IMU・機体モデル・3D点群を確認するための3パーツ構成です。まず[Getting Started](getting-started.md)、[DockerのJazzy](docker.md)、または[Space ROS](space-ros.md)でMODとbridgeを導入してください。KSP 1.xのSandboxを使用します。
 
 ここではVABで同じ構成を作って保存する手順を提供します。ダウンロード用の`.craft`や飛行済みセーブは付属しません。この組立手順の実KSPでの新規検証は未実施です。
 
@@ -22,18 +22,16 @@
 
 この機体は受信確認用です。制御デモや`setpoint_controller`は起動せず、Spaceキーによるステージ操作も不要です。長時間使う場合は電源を別途用意し、まずは短時間の受信を確認してください。
 
-## Jazzyで受信を確認する
+## DockerのJazzyで受信を確認する
 
-[Getting Startedの手順5](getting-started.md#_5-ros2-bridgeを起動する)でbridgeを1つ起動したまま、別ターミナルで実行します。`hz`は数行確認するたびにCtrl+Cで終了します。
+[Getting Startedの手順5](getting-started.md#_5-ros2-bridgeを起動する)で`pylon-jazzy`コンテナを起動したまま、別ターミナルで実行します。`hz`は数行確認するたびにCtrl+Cで終了します。
 
 ```bash
-source /opt/ros/jazzy/setup.bash
-source ~/ros2_ws/install/setup.bash
-ros2 topic echo --once --qos-durability transient_local /pylon/status
-ros2 topic echo --once --qos-reliability best_effort /ksp_vessel/lifecycle
-ros2 topic hz /ksp_vessel/imu/data_raw
-ros2 topic hz /ksp_vessel/lidar_3d/front_lidar/points
-ros2 topic echo --once --qos-durability transient_local /ksp_vessel/root_frame
+docker exec pylon-jazzy /pylon-entrypoint.sh ros2 topic echo --once --qos-durability transient_local /pylon/status
+docker exec pylon-jazzy /pylon-entrypoint.sh ros2 topic echo --once --qos-reliability best_effort /ksp_vessel/lifecycle
+docker exec -it pylon-jazzy /pylon-entrypoint.sh ros2 topic hz /ksp_vessel/imu/data_raw
+docker exec -it pylon-jazzy /pylon-entrypoint.sh ros2 topic hz /ksp_vessel/lidar_3d/front_lidar/points
+docker exec pylon-jazzy /pylon-entrypoint.sh ros2 topic echo --once --qos-durability transient_local /ksp_vessel/root_frame
 ```
 
 ## Space ROSで受信を確認する
