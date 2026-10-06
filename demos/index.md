@@ -28,7 +28,7 @@ cd ~/src/PyLoN
 
 1. [Getting Started](../guide/getting-started.md)でUbuntu 24.04とROS2 Jazzy、PyLoN MODとbridgeを導入します。
 2. KSPの通常操作で各デモに合う機体を準備します。デモは機体やセーブを自動生成しません。
-3. 各ページの手順で追加の依存パッケージを導入し、デモを同期・ビルドします。
+3. 各ページの手順で追加の依存パッケージを導入し、デモを同期します。ament版はビルドし、デブリ周回はPythonソースから直接起動します。
 4. 起動するすべてのターミナルでROS環境を読み込みます。
 
 ```bash
@@ -47,6 +47,8 @@ rosdep install --from-paths Ros2 ../demos --ignore-src --rosdistro jazzy -y
 source ~/ros2_ws/install/setup.bash
 ```
 
+デブリ周回のNumPy・SciPy・PyYAMLなどのPython依存は、[個別の準備手順](debris-orbit.md#1-pythonデモの実行環境を準備する)で導入します。このデモは同期のみでcolconの対象になりません。
+
 この同期は、Getting Startedでインストール済みのMODを使ってROS2側を追加する手順です。MODも更新するときはKSPを終了し、`./sync.sh --all-demos`を実行してから再起動します。
 
 ## 環境と機体を選ぶ
@@ -57,7 +59,7 @@ source ~/ros2_ws/install/setup.bash
 
 ## Sensor IDと起動順
 
-各ページの`front_lidar`や`orbit_camera`は例です。VAB/SPHのパーツ右クリックメニューにある`Edit ROS2 Sensor ID`で設定するか、launch引数を実際のIDへ変更してください。
+各ページの`front_lidar`や`orbit_camera`は例です。VAB/SPHのパーツ右クリックメニューにある`Edit ROS2 Sensor ID`で設定するか、起動引数を実際のIDへ変更してください。
 
 同じKSPへ接続するbridgeは1つだけ起動します。軌道周回と2D SLAMでは別途bridgeを起動し、月面Nav2ではlaunchが起動するbridgeを使います。複数の制御デモも同時に動かさず、現在のデモを停止してから切り替えてください。
 

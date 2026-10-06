@@ -8,19 +8,23 @@
 
 中央下の太陽電池を広げた機体が自機、右上のタンクとエンジンが撮影対象です。このページの画像は2026-09-07のKSP 1.12.5での実行記録です。
 
-## 1. デモをインストールする
+## 1. Pythonデモの実行環境を準備する
 
 [Getting Started](../guide/getting-started.md)でMODとbridgeを導入した後、PyLoNリポジトリのルートで実行します。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
+sudo apt install python3-numpy python3-scipy python3-yaml \
+  ros-jazzy-sensor-msgs-py ros-jazzy-tf2-ros-py ros-jazzy-nav-msgs \
+  ros-jazzy-visualization-msgs
 rosdep install --from-paths \
   Ros2/pylon_interfaces Ros2/pylon_bridge Ros2/pylon_vehicle_control \
-  ../demos/pylon_demo_debris_orbit \
   --ignore-src --rosdistro jazzy -y
 ./sync.sh --skip-ksp-build --skip-ksp-sync --demo debris_orbit
 source ~/ros2_ws/install/setup.bash
 ```
+
+このデモはament_pythonを使わず、Pythonソースから起動します。同期は本体のROSパッケージをビルドし、デモのソースをコピーします。デモ自身のcolconビルドやpip installは不要です。
 
 ## 2. 同梱の機体をKSPで読み込む
 
@@ -92,15 +96,15 @@ ros2 topic hz /ksp_vessel/camera/orbit_camera/image_raw
 
 ### 制御を無効にして開始条件を確認する
 
-ターミナルBで推定と表示だけを起動します。`enabled:=false`に加え、`controller_enabled:=false`を明示して制御ノードも起動しません。
+ターミナルBで推定と表示だけを起動します。`--no-enabled`に加え、`--no-controller`を明示して制御ノードも起動しません。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 source ~/ros2_ws/install/setup.bash
-ros2 launch pylon_demo_debris_orbit pylon_demo_debris_orbit.launch.py \
-  enabled:=false controller_enabled:=false demo_instance_id:=orbit_a \
-  lidar_sensor_id:=front_lidar camera_sensor_id:=orbit_camera \
-  orbit_radius:=15.0 rviz:=true
+python3 ../demos/pylon_demo_debris_orbit/run.py \
+  --no-enabled --no-controller --instance orbit_a \
+  --lidar-sensor-id front_lidar --camera-sensor-id orbit_camera \
+  --orbit-radius 15.0 --rviz
 ```
 
 別のsource済みターミナルで、次のTopicを確認します。`echo`は確認ごとにCtrl+Cで終了します。
@@ -124,23 +128,23 @@ ros2 topic echo /ksp_vessel/imu/data_raw --field angular_velocity
 
 ### 分離後の初期状態を保存する
 
-条件を満たしたら、推定表示のlaunchをCtrl+Cで終了し、KSPを一時停止して名前付き保存`PyLoN Orbit - ready`を作ります。分離前の保存とは別名にします。**`.craft`だけを保存しても、この状態には戻れません。**
+条件を満たしたら、推定表示のプロセスをCtrl+Cで終了し、KSPを一時停止して名前付き保存`PyLoN Orbit - ready`を作ります。分離前の保存とは別名にします。**`.craft`だけを保存しても、この状態には戻れません。**
 
 保存名と一緒に、KSP/PyLoN/demosのバージョンまたはコミット、近地点・遠地点、対象、距離・相対速度・角速度、電力・推進剤残量、Sensor ID、周回半径を控えます。ソースのコミットはそれぞれのリポジトリで`git rev-parse HEAD`で確認できます。
 
-保存後はポーズを解除してセンサー受信を確認し、次の自動制御launchを新しく起動します。推定だけのlaunchは残さないでください。
+保存後はポーズを解除してセンサー受信を確認し、次の自動制御プロセスを新しく起動します。推定だけのプロセスは残さないでください。
 
 ## 4. 周回を開始する
 
-ターミナルBで実行します。`enabled:=true`を指定すると機体の制御を開始します。RCSを有効にし、以降は手動入力・機体切替・時間倍率変更を行わないでください。制御権取得中のSAS抑止はデモのlease設定で行います。
+ターミナルBで実行します。`--enabled`を指定すると機体の制御を開始します。RCSを有効にし、以降は手動入力・機体切替・時間倍率変更を行わないでください。制御権取得中のSAS抑止はデモの設定で行います。現行APIの共有PyLoN操作権を使用し、指令のcontroller/lease IDとsequenceはbridgeが補完します。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 source ~/ros2_ws/install/setup.bash
-ros2 launch pylon_demo_debris_orbit pylon_demo_debris_orbit.launch.py \
-  enabled:=true demo_instance_id:=orbit_a \
-  lidar_sensor_id:=front_lidar camera_sensor_id:=orbit_camera \
-  orbit_radius:=15.0 rviz:=true
+python3 ../demos/pylon_demo_debris_orbit/run.py \
+  --enabled --instance orbit_a \
+  --lidar-sensor-id front_lidar --camera-sensor-id orbit_camera \
+  --orbit-radius 15.0 --rviz
 ```
 
 対象を見つけるまでは機体を回して探索します。点群から3回続けて対象を取得すると、対象への指向・接近を始め、指定半径へ到達後に周回します。RVizでは点群、対象クラスタ、対象中心、自機、目標半径、軌跡を確認できます。
@@ -149,7 +153,7 @@ ros2 launch pylon_demo_debris_orbit pylon_demo_debris_orbit.launch.py \
 
 水色の点群が対象、灰色の円が目標半径、オレンジ色の線が自機の推定軌跡です。点群を捕捉できているか、軌跡が対象の周囲を回っているかを確認します。
 
-推定と表示だけを試す場合は、上のコマンドの`enabled:=true`を`enabled:=false controller_enabled:=false`へ置き換えます。
+推定と表示だけを試す場合は、上のコマンドの`--enabled`を`--no-enabled --no-controller`へ置き換えます。
 
 ## 5. 状態と撮影結果を確認する
 
@@ -159,7 +163,7 @@ ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/estimator_status
 ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/controller_status
 ```
 
-`demo_instance_id`を変更した場合は、Topic内の`orbit_a`も置き換えます。
+`--instance`を変更した場合は、Topic内の`orbit_a`も置き換えます。
 
 周回開始位置を0度とし、36度ごとにPNGと計測JSONを保存します。保存先はデモを起動したディレクトリからの相対パスで、`pylon_demo_debris_orbit_captures/orbit_a/<起動日時>/`です。既定では2周目以降も撮影を続けます。
 
@@ -173,28 +177,35 @@ ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/controller_status
 
 デモのターミナルで`Ctrl-C`を押すと、制御指令をゼロにしてleaseを解放します。終了後にbridgeも`Ctrl-C`で停止できます。
 
-機体切替、制御権喪失、入力欠測後は停止を保持します。IMUが0.5秒を超えて途切れた場合も、機体を安定させてからデモのlaunch全体を起動し直してください。
+機体切替、制御権喪失、入力欠測後は停止を保持します。IMUが0.5秒を超えて途切れた場合も、機体を安定させてからデモのプロセス全体を起動し直してください。
 
 ### 保存した初期状態から再試行する
 
-1. デモのlaunch全体をCtrl+Cで終了し、bridgeも停止します。停止したlaunchのプロセスが残っていないことを確認します。
+1. デモのプロセス全体をCtrl+Cで終了し、bridgeも停止します。停止したデモのプロセスが残っていないことを確認します。
 2. KSPで名前付き保存`PyLoN Orbit - ready`を読み込みます。分離からやり直す場合は`before separation`を選びます。
 3. 自機が操作対象で、対象・軌道・センサー設定・電力・推進剤が保存時の状態に戻っていることを確認します。ポーズ解除、時間倍率1倍にします。
 4. 手順3のbridgeを起動し直し、新しいlifecycleがACTIVEになったこととセンサーの受信を確認します。
-5. **制御を無効にしたlaunch**で10秒程度の開始条件確認を再実施し、そのlaunchを終了してから手順4の自動制御を開始します。
+5. **制御を無効にしたデモ**で10秒程度の開始条件確認を再実施し、そのデモを終了してから手順4の自動制御を開始します。
 
-ロードではシミュレーション時刻が巻き戻ります。前の推定器・制御器を残して使い回さず、launch全体を再起動してIMUの基準とセッションを揃えてください。名前付き保存はKSP側の状態を復元しますが、ROSノードの推定状態は復元しません。同じ条件からやり直すための手順であり、毎回まったく同じ軌跡になる保証ではありません。
+ロードではシミュレーション時刻が巻き戻ります。前の推定器・制御器を残して使い回さず、3ノード全体を再起動してIMUの基準とセッションを揃えてください。名前付き保存はKSP側の状態を復元しますが、ROSノードの推定状態は復元しません。同じ条件からやり直すための手順であり、毎回まったく同じ軌跡になる保証ではありません。
 
 ## 主な起動引数
 
 | 引数 | この手順の値 | 用途 |
 |---|---|---|
-| `enabled` | `true` | 周回制御を開始 |
-| `demo_instance_id` | `orbit_a` | Topicと撮影ディレクトリの識別名 |
-| `lidar_sensor_id` / `camera_sensor_id` | `front_lidar` / `orbit_camera` | 搭載センサーのID |
-| `orbit_radius` | `15.0` | 周回半径［m］ |
-| `rviz` | `true` | RVizを起動 |
-| `controller_enabled` | `true`（既定） | 共通制御器を起動 |
-| `config_file` | パッケージ同梱YAML | 推定・誘導・撮影設定を変更 |
+| `--enabled` / `--no-enabled` | `--enabled` | 周回制御を開始／無効化 |
+| `--instance` | `orbit_a` | Topicと撮影ディレクトリの識別名 |
+| `--lidar-sensor-id` / `--camera-sensor-id` | `front_lidar` / `orbit_camera` | 搭載センサーのID |
+| `--orbit-radius` | `15.0` | 周回半径［m］ |
+| `--rviz` | 指定する | RVizを起動 |
+| `--no-controller` | 制御時は指定しない | 推定・表示だけを起動 |
+| `--config` | ソース同梱YAML | 推定・誘導・撮影設定を変更 |
 
 設定ファイルはリポジトリの`../demos/pylon_demo_debris_orbit/config/pylon_demo_debris_orbit.yaml`です。機体への指令と所有権は[機体制御API](../api/vehicle-control.md)、画像の設定は[RGBカメラ](../parts/camera.md)を参照してください。
+
+
+## Python版の構成と実飛行確認
+
+位置・姿勢認識は`debris_orbit/recognition.py`、目標姿勢は`debris_orbit/attitude.py`、目標推力は`debris_orbit/thrust.py`に分かれています。3ノードは通常1つのPythonプロセスで実行します。詳細は[デモREADME](https://github.com/PyLoN-sim/demos/blob/main/pylon_demo_debris_orbit/README.md)を参照してください。
+
+2026-10-06、Linux版KSP 1.12.5・ROS 2 Jazzy・現行PyLoNで、分離済みの軌道上セーブの検証コピーを使って一周と2周目の撮影を確認しました。`front_lidar` / `front_camera`、半径15 m・角速度1 deg/sで推定508度まで進み、36度ごとに15枚保存しました。最大撮影角誤差は0.82度です。約9分後には約1秒のセンサー受信空白で欠測ガードが作動し、停止・制御権返却しました。長時間の無中断運転と、同梱craftの新規読み込み・分離からの手順は未確認です。
