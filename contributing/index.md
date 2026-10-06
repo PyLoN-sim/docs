@@ -4,7 +4,7 @@
 
 ## 開発環境
 
-[Getting Started](../guide/getting-started.md)に従ってKSPとROS2 Jazzyを準備します。実装の責務と依存方向は[アーキテクチャ](architecture.md)、機能ごとのファイルは[ソース案内](source-map.md)を参照してください。
+[Getting Started](../guide/getting-started.md)でKSP・MODとDockerの受信環境を準備します。下記のホスト向け同期・ビルドには、別途[ホストのROS 2 Jazzyと依存パッケージ](../guide/docker.md#ホストのrosアプリ・rvizを接続する)も必要です。実装の責務と依存方向は[アーキテクチャ](architecture.md)、機能ごとのファイルは[ソース案内](source-map.md)を参照してください。
 
 作業前にリポジトリの`AGENTS.md`を確認してください。ローカルに`Development/AGENTS.md`がある場合、調査やKSP実装の変更前にそちらも確認します。実験コード、検証記録、モデルの編集元はGit管理外の`Development/`で管理します。本体のビルドは公開ソースだけで完結させます。
 

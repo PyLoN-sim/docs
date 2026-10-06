@@ -42,6 +42,7 @@ export default defineConfig({
         text: '導入・アプリケーション開発',
         items: [
           { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Dockerの構成・運用', link: '/guide/docker' },
           { text: 'Space ROSで動かす', link: '/guide/space-ros' },
           { text: '最小受信確認用機体', link: '/guide/minimal-receiver' },
           { text: 'システム概要', link: '/guide/overview' },

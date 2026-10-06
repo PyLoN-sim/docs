@@ -26,7 +26,7 @@ cd ~/src/PyLoN
 
 ## 共通の準備
 
-1. [Getting Started](../guide/getting-started.md)でUbuntu 24.04とROS2 Jazzy、PyLoN MODとbridgeを導入します。
+1. [Getting Started](../guide/getting-started.md)でPyLoN MODとDocker内のJazzy bridgeを導入し、通信を確認します。本体イメージにデモは含まれません。以下のホスト向け手順には、別途ホストのJazzy・colcon・rosdepとPyLoNパッケージが必要です。Space ROS用のコンテナ手順があるデモは、個別ガイドから利用できます。
 2. KSPの通常操作で各デモに合う機体を準備します。デモは機体やセーブを自動生成しません。
 3. 各ページの手順で追加の依存パッケージを導入し、デモを同期します。ament版はビルドし、デブリ周回はPythonソースから直接起動します。
 4. 起動するすべてのターミナルでROS環境を読み込みます。
@@ -53,7 +53,7 @@ source ~/ros2_ws/install/setup.bash
 
 ## 環境と機体を選ぶ
 
-初回は[環境別の読む順序](../guide/getting-started.md#choose-environment)を確認し、[最小受信機体](../guide/minimal-receiver.md)で通信を確認してからデモ用機体へ進みます。Space ROSのbridgeとホストJazzyのデモを併用する場合は、[併用設定](../guide/space-ros.md#ホストのros-2から使う)に従い、ホスト側でbridgeを二重起動しないでください。
+初回は[Getting Started](../guide/getting-started.md)でDockerのbridgeを導入し、[最小受信機体](../guide/minimal-receiver.md)で通信を確認してからデモ用機体へ進みます。Space ROSのbridgeとホストJazzyのデモを併用する場合は、[併用設定](../guide/space-ros.md#ホストのros-2から使う)に従い、ホスト側でbridgeを二重起動しないでください。
 
 デブリ周回では`.craft`の読み込みだけでは初期状態は揃いません。[分離前・分離後の保存と開始条件](debris-orbit.md#分離前の状態を保存する)を確認してください。
 
@@ -61,7 +61,7 @@ source ~/ros2_ws/install/setup.bash
 
 各ページの`front_lidar`や`orbit_camera`は例です。VAB/SPHのパーツ右クリックメニューにある`Edit ROS2 Sensor ID`で設定するか、起動引数を実際のIDへ変更してください。
 
-同じKSPへ接続するbridgeは1つだけ起動します。軌道周回と2D SLAMでは別途bridgeを起動し、月面Nav2ではlaunchが起動するbridgeを使います。複数の制御デモも同時に動かさず、現在のデモを停止してから切り替えてください。
+同じKSPへ接続するbridgeは1つだけ起動します。デモ自身がbridgeを起動する場合は、Getting Startedで起動した`pylon-jazzy`コンテナを停止してから実行します。軌道周回と2D SLAMでは別途bridgeを起動し、月面Nav2ではlaunchが起動するbridgeを使います。複数の制御デモも同時に動かさず、現在のデモを停止してから切り替えてください。
 
 ## 入力を受信できない場合
 
