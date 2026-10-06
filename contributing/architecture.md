@@ -24,12 +24,9 @@
 
 ## 制御の境界
 
-機体制御の整合性を決めるauthority aggregateはKSP process内にあります。controllerは`/ksp_vessel/lifecycle`から現在の`vessel_id`を取得し、その機体に対する期限付きleaseを獲得してから指令します。すべての正式なWrench・アクチュエータ指令は次を持ちます。
+機体制御の整合性を決めるauthority aggregateはKSP process内にあります。操作対象は常に`active_vessel`、操作権はプレイヤーとPyLoNの二択です。PyLoN内のcontroller間では操作権を共有し、priorityによるpreemptは行いません。緊急停止は独立したlatchフラグです。
 
-- KSP機体を特定する`vessel_id`
-- 指令元を特定する`controller_id`
-- 所有権を特定する`lease_id`
-- replayや並び替わりを拒否する`sequence`
+bridgeは省略された指令identityとsequenceを補完し、現在のflight sessionへ結び付けます。内部の機体IDとruntime epochは遅延した旧機体の指令を拒否するための情報です。互換フィールドのcontroller/lease IDは重複拒否のストリーム識別子で、別のownerを作りません。
 
 KSP側はSAS排他、timeout、角速度上限、Wrench変化率、連続噴射時間、emergency stopを最終安全境界として適用します。ROS nodeが停止してもこの制約は残ります。
 

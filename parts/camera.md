@@ -11,8 +11,8 @@
 | 方向 | Topic | 型 | 内容 |
 |---|---|---|---|
 | 入力 | なし | — | ROS2からのカメラ制御Topicはありません |
-| 出力 | `/ksp_vessel/camera/<camera_id>/image_raw` | `sensor_msgs/msg/Image` | raw RGB画像 |
-| 出力 | `/ksp_vessel/camera/<camera_id>/camera_info` | `sensor_msgs/msg/CameraInfo` | 内部パラメーター |
+| 出力 | `/ksp_vessel/camera/<camera_id>/image_raw` | [`sensor_msgs/msg/Image`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/Image.html) | raw RGB画像 |
+| 出力 | `/ksp_vessel/camera/<camera_id>/camera_info` | [`sensor_msgs/msg/CameraInfo`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/CameraInfo.html) | 内部パラメーター |
 
 ## Image
 

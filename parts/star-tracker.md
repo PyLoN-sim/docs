@@ -22,8 +22,8 @@ ros2 topic echo /ksp_vessel/star_tracker/star_tracker_example/attitude
 
 | Topic | 型 | 配信条件 |
 |---|---|---|
-| `/ksp_vessel/star_tracker/<id>/state` | `pylon_interfaces/msg/StarTrackerState` | 正常・測定不能とも既定5 Hz。姿勢、valid、理由、共分散、機体・センサーIDを同時配信 |
-| `/ksp_vessel/star_tracker/<id>/attitude` | `geometry_msgs/msg/QuaternionStamped` | `valid=true`の測定だけ |
+| `/ksp_vessel/star_tracker/<id>/state` | [`pylon_interfaces/msg/StarTrackerState`](/api/interfaces/msg/StarTrackerState) | 正常・測定不能とも既定5 Hz。姿勢、valid、理由、共分散、機体・センサーIDを同時配信 |
+| `/ksp_vessel/star_tracker/<id>/attitude` | [`geometry_msgs/msg/QuaternionStamped`](https://docs.ros.org/en/jazzy/p/geometry_msgs/msg/QuaternionStamped.html) | `valid=true`の測定だけ |
 
 両方Reliable / Volatile / depth 10です。`--topic-prefix`に追従し、`--disable-ground-truth`でも利用できます。推定器は`state`を購読し、`valid`とtimestampを確認してください。`attitude`単独には無効通知が含まれません。
 

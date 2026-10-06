@@ -60,7 +60,7 @@ ros2 run pylon_bridge udp_bridge --host 127.0.0.1 --port 49010
 | `--actuators-prefix` | `/ksp_vessel/actuators` | 種類別の型付きアクチュエータTopicのprefix |
 | `--vehicle-command-timeout-sec` | `0.5` | Body Wrenchと型付きcommandの既定timeout |
 
-`--vehicle-command-timeout-sec`は有限の正数のみ受け付けます。ホイール、Engine、RCS、モーターの型付きcommandで`timeout_sec`に0以外を指定すると、その値を優先します。KSP側では0.05〜10秒へclampされます。型付きcommandは不可逆な`SeparationCommand`を含めauthority leaseが必須です。
+`--vehicle-command-timeout-sec`は有限の正数のみ受け付けます。ホイール、Engine、RCS、モーターの型付きcommandで`timeout_sec`に0以外を指定すると、その値を優先します。KSP側では0.05〜10秒へclampされます。型付きcommandは不可逆な`SeparationCommand`を含め、active_vesselの操作権がPyLoNにあるときだけ実行されます。機体IDの指定は不要です。
 
 ## すべてを独自namespaceへ移す例
 

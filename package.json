@@ -4,11 +4,14 @@
   "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
+    "docs:build": "node scripts/interfaces.mjs --check && vitepress build",
     "docs:preview": "vitepress preview",
     "docs:deploy": "wrangler deploy",
     "docs:deploy:check": "wrangler deploy --dry-run",
-    "docs:preview:cloudflare": "wrangler dev"
+    "docs:preview:cloudflare": "wrangler dev",
+    "docs:interfaces": "node scripts/interfaces.mjs",
+    "docs:interfaces:sync": "node scripts/interfaces.mjs --source",
+    "docs:interfaces:check": "node scripts/interfaces.mjs --check"
   },
   "devDependencies": {
     "vitepress": "1.6.4",

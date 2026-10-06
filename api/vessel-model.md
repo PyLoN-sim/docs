@@ -6,11 +6,11 @@ Flight中の操作機体の形状とパーツ配置を、RViz向けの簡略化�
 
 | Topic | 型 | QoS | 内容 |
 |---|---|---|---|
-| `/ksp_vessel/robot_description` | `std_msgs/msg/String` | Reliable / transient local / depth 1 | URDF文字列 |
-| `/ksp_vessel/root_frame` | `std_msgs/msg/String` | Reliable / transient local / depth 1 | root link名 |
-| `/tf` | `tf2_msgs/msg/TFMessage` | dynamic | `base_link`からCoM基準proxy root |
-| `/tf_static` | `tf2_msgs/msg/TFMessage` | Reliable / transient local | 固定jointとセンサー取付frame |
-| `/ksp_vessel/lifecycle` | `VesselLifecycle` | Reliable / transient local | vessel ID、generation、model readiness |
+| `/ksp_vessel/robot_description` | [`std_msgs/msg/String`](https://docs.ros.org/en/jazzy/p/std_msgs/msg/String.html) | Reliable / transient local / depth 1 | URDF文字列 |
+| `/ksp_vessel/root_frame` | [`std_msgs/msg/String`](https://docs.ros.org/en/jazzy/p/std_msgs/msg/String.html) | Reliable / transient local / depth 1 | root link名 |
+| `/tf` | [`tf2_msgs/msg/TFMessage`](https://docs.ros.org/en/jazzy/p/tf2_msgs/msg/TFMessage.html) | dynamic | `base_link`からCoM基準proxy root |
+| `/tf_static` | [`tf2_msgs/msg/TFMessage`](https://docs.ros.org/en/jazzy/p/tf2_msgs/msg/TFMessage.html) | Reliable / transient local | 固定jointとセンサー取付frame |
+| `/ksp_vessel/lifecycle` | [`pylon_interfaces/msg/VesselLifecycle`](/api/interfaces/msg/VesselLifecycle) | Reliable / transient local | vessel ID、generation、model readiness |
 
 ```bash
 ros2 topic echo --once /ksp_vessel/root_frame

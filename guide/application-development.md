@@ -56,10 +56,12 @@ ros2 interface show pylon_interfaces/msg/ControlSetpoint
 
 力・トルクや個別パーツを直接指令するノードは、[機体制御API](../api/vehicle-control.md)に従って制御権を取得します。
 
-1. lifecycleから操作機体の`vessel_id`を取得します。
-2. leaseを取得し、authority stateで所有権の確定を確認します。
-3. 指令へ`vessel_id`、`controller_id`、`lease_id`を設定し、同じlease内の全指令を通じて`sequence`を増やします。
-4. timeoutより短い周期で指令を送り、leaseも更新します。終了時にはleaseを解放します。
+1. lifecycleで`active_vessel`が利用可能か確認します。
+2. `ACTION_ACQUIRE`を送り、`STATE_PYLON`かつ`emergency_stop: false`を確認します。
+3. 指令を送ります。機体ID・controller/lease ID・sequenceはbridgeが補完できます。
+4. timeoutより短い周期で指令を送り、操作権のheartbeatも更新します。終了時は解放して`STATE_PLAYER`へ戻します。
+
+操作権はプレイヤーとPyLoNの二択です。PyLoN内のノード間では共有し、priorityでの調停は行いません。
 
 各パーツのstateとWrench feedbackで実現量を確認してください。機体切替、制御権喪失、入力欠測時には目標を破棄し、新しい状態に基づいて制御を開始します。共通制御器の再開には、新たな`MODE_IDLE`と後続のsetpointが必要です。
 

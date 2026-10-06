@@ -1,6 +1,6 @@
 ---
 title: Dockerの構成・運用
-description: PyLoN bridge入りのJazzyイメージをビルドし、ホストのKSP MODと接続する。Dockerfile、Compose、受信確認、停止・更新の手順。
+description: PyLoN bridge入りのJazzyイメージを取得し、ホストのKSP MODと接続する。コンテナ構成、Compose、受信確認、停止・更新の手順。
 ---
 
 # Dockerの構成・運用
@@ -41,28 +41,17 @@ PyLoNは**GHCRのビルド済みイメージと、リポジトリのDockerfile�
 
 ## 1. ホストとMODを準備する
 
-[Getting StartedのUbuntu・Steam/KSPの前提](getting-started.md#ubuntu・steam-kspの前提)に従ってLinux版KSPを準備します。Docker Engineは[Docker公式のUbuntu手順](https://docs.docker.com/engine/install/ubuntu/)で導入してください。Composeを使う場合はCompose pluginも導入します。
+[Getting StartedのUbuntu・Steam/KSPの前提](getting-started.md#prerequisites)に従ってLinux版KSPを準備します。Docker Engineは[Docker公式のUbuntu手順](https://docs.docker.com/engine/install/ubuntu/)で導入してください。Composeを使う場合はCompose pluginも導入します。
 
 ```bash
 docker version         # Server情報が表示されること
 docker compose version # Composeを使う場合
 
-mkdir -p ~/src
-git clone https://github.com/PyLoN-sim/PyLoN.git ~/src/PyLoN
-cd ~/src/PyLoN
-export KSPDIR="$HOME/.local/share/Steam/steamapps/common/Kerbal Space Program"
 ```
 
-取得済みならそのリポジトリへ移動します。Dockerのグループ権限は[公式のインストール後の手順](https://docs.docker.com/engine/install/linux-postinstall/)を参照し、`docker version`が成功する状態にしてください。
+Dockerのグループ権限は[公式のインストール後の手順](https://docs.docker.com/engine/install/linux-postinstall/)を参照し、`docker version`が成功する状態にしてください。
 
-**KSPを終了した状態**でPyLoN MODをインストールします。
-
-- 配布版：[Releases](https://github.com/PyLoN-sim/PyLoN/releases)の`PyLoN-vX.Y.Z.zip`を展開し、`GameData/PyLoN`をKSPの`GameData`へコピーします。更新前に既存の`Config/Runtime.cfg`を控えます。
-- ソース版：Getting Startedの.NET SDKと基本ツールを用意し、次を実行します。ホストのROS・rosdep・colconは不要です。
-
-```bash
-./sync.sh --skip-ros2-sync --skip-ros2-build
-```
+[Getting Started](getting-started.md#install-mod)に従って配布版MODを導入します。ソースから作る場合は[本体開発の手順](../contributing/index.md#build-mod)を参照してください。
 
 KSP側の`GameData/PyLoN/Config/Runtime.cfg`は既定のまま使います。
 
@@ -80,7 +69,7 @@ PYLON_TRANSPORT
 ## 配布タグとバージョン固定
 
 ::: info GHCRの初回公開
-[公開ワークフローを追加するPR](https://github.com/PyLoN-sim/PyLoN/pull/1)を作成しました。初回ビルドとPackagesのPublic設定が完了するまでは、下記のpullコマンドは使えません。その場合は、このページのローカルビルド手順で起動してください。
+[公開ワークフローを追加するPR](https://github.com/PyLoN-sim/PyLoN/pull/1)を作成しました。初回ビルドとPackagesのPublic設定が完了するまでは、下記のpullコマンドは使えません。その場合のローカルビルドは[本体開発の手順](../contributing/index.md#build-docker)を参照してください。
 :::
 
 イメージ名は`ghcr.io/pylon-sim/pylon-bridge`です。
@@ -102,7 +91,7 @@ docker image inspect ghcr.io/pylon-sim/pylon-bridge:jazzy \
 
 得られた`ghcr.io/pylon-sim/pylon-bridge@sha256:...`を`docker run`のイメージ名として使えば、後から`jazzy`が更新されても同じイメージで起動できます。
 
-## 2. イメージを取得する・ビルドする
+## 2. イメージを取得する
 
 通常は次で取得します。
 
@@ -110,20 +99,7 @@ docker image inspect ghcr.io/pylon-sim/pylon-bridge:jazzy \
 docker pull ghcr.io/pylon-sim/pylon-bridge:jazzy
 ```
 
-ソースを変更する場合は、PyLoNリポジトリのルートでローカルイメージをビルドします。
-
-```bash
-docker build -f Docker/jazzy/Dockerfile --target runtime -t pylon-bridge:jazzy .
-
-# 回帰テストも実行する場合（KSPとは別のネットワークでビルド）
-docker build -f Docker/jazzy/Dockerfile --target test -t pylon-bridge:jazzy-test .
-
-docker image ls pylon-bridge
-```
-
-初回はベースイメージと依存を取得します。`Successfully tagged`またはBuildKitのexport完了が表示されたら成功です。Pythonパッケージと独自メッセージもイメージ内でビルドします。
-
-ベースのdigestは固定していますが、apt・rosdepの配布内容まではsnapshotに固定していません。同じDockerfileでも将来の再ビルドで依存の更新を取り込みます。完全に同じ配布物が必要なら、作ったイメージをレジストリへ保存し、そのイメージのdigestで指定してください。
+PyLoNのソースを変更してイメージを作る場合は[本体開発の手順](../contributing/index.md#build-docker)を参照してください。
 
 ## 3. bridgeコンテナを起動する
 
@@ -181,7 +157,13 @@ docker exec -it pylon-jazzy /pylon-entrypoint.sh bash --norc
 
 ## 5. Composeで起動する場合
 
-同じイメージと設定をComposeでも使えます。手順3のコンテナを停止してから実行します。
+同じイメージと設定をComposeでも使えます。手順3のコンテナを停止し、Composeファイルを取得するためリポジトリをcloneしてルートへ移動します（この手順にはGitが必要です）。取得済みなら、そのリポジトリへ移動してください。
+
+```bash
+mkdir -p ~/src
+git clone https://github.com/PyLoN-sim/PyLoN.git ~/src/PyLoN
+cd ~/src/PyLoN
+```
 
 ```bash
 docker compose -f Docker/jazzy/compose.yaml pull
@@ -202,7 +184,7 @@ docker compose -f Docker/jazzy/compose.yaml down
 
 ホストにJazzyがある場合はDDS経由でコンテナのTopicを使えます。Getting StartedはDocker内だけで受信を確認するため、ホスト向けのアプリを作る場合は追加の準備が必要です。
 
-Jazzyが未導入なら、[ROS 2公式のUbuntu 24.04向け手順](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)で配布元を登録し、`ros-jazzy-ros-base`と`ros-dev-tools`を導入します。続いて、コンテナと同じソース版のPyLoNリポジトリで実行します。
+Jazzyが未導入なら、[ROS 2公式のUbuntu 24.04向け手順](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)で配布元を登録し、`ros-jazzy-ros-base`と`ros-dev-tools`を導入します。続いて、コンテナと同じ版の[PyLoNソースを取得](../contributing/index.md#source-setup)し、そのルートで実行します。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -238,7 +220,7 @@ docker logs pylon-jazzy > pylon-jazzy.log
 docker stop pylon-jazzy
 ```
 
-配布イメージは`docker pull`してからコンテナを作り直します。Composeでは`pull`、`up --no-build -d`の順に更新します。ROSソースを変更したローカルイメージは手順2で再ビルドします。MOD変更時はKSPを終了してMODを更新し、KSPも再起動します。
+配布イメージは`docker pull`してからコンテナを作り直します。Composeでは`pull`、`up --no-build -d`の順に更新します。ROSソースを変更したローカルイメージの再ビルドは[本体開発の手順](../contributing/index.md#build-docker)を参照してください。MOD変更時はKSPを終了してMODを更新し、KSPも再起動します。
 
 ## 検証記録
 

@@ -15,6 +15,32 @@ pnpm run docs:preview
 
 `guide/`は導入、`api/`・`parts/`・`reference/`は仕様、`demos/`は使い方、`contributing/`は開発手順です。デモの実装は別のdemosリポジトリにあります。
 
+## 日本語・英語の編集
+
+日本語版は既存のURL、英語版は `/en/` 以下で公開します。PCではヘッダーの言語メニュー、モバイルではナビゲーションメニューから、現在のページの対応する言語版へ切り替えられます。検索対象も現在の言語に切り替わります。
+
+本文を変更・追加するときは、同じ相対パスの日本語版と `en/` の英語版を合わせて更新してください。英語版の内部リンクは `/en/` 配下または英語版内の相対リンクにします。共通画像は既存の画像を参照し、複製しません。
+
+ページ内の同じ節へ切り替えられるよう、対応する見出しのアンカーIDを両言語で揃えます。英語版の `{#...}` は日本語版の見出しIDを保持しています。新しい見出しは両言語に同じ明示IDを付けると、見出し名を変更してもリンクを維持できます。
+
+ナビゲーションとUI文言は `.vitepress/locales/ja.ts`・`.vitepress/locales/en.ts`、言語と検索の共通設定は `.vitepress/config.mts` で管理します。変更後は `pnpm run docs:build` とプレビューで、両言語のリンク・言語切り替え・検索を確認してください。
+
+## ROS 2インターフェース定義の更新
+
+`api/interfaces/`・`en/api/interfaces/`は、`.vitepress/interfaces.json`に保存した定義から生成します。全登録メッセージ・サービスを掲載し、フィールド・定数・配列上限・元のコメントと入れ子の型へのリンクを両言語で生成します。通常のサイトビルドは本体のcloneやROS環境を必要としません。
+
+本体の定義を変更したときは、PyLoNのcheckoutを指定して保存済み定義とページを更新してください。`Ros2/pylon_interfaces/CMakeLists.txt`の登録一覧を取得元にします。
+
+```bash
+pnpm run docs:interfaces:sync ../PyLoN
+pnpm run docs:interfaces:check
+pnpm run docs:build
+```
+
+取得元commitとローカル変更の有無も記録します。公開する本体の版に合わせてcheckoutを選び、`.vitepress/interfaces.json`と生成ページを同時にコミットしてください。型名を追加・削除した場合はTopic表やAPIページのリンクも更新します。
+
+表記やページの構成を変更する場合は`scripts/interfaces.mjs`を編集し、`pnpm run docs:interfaces`で再生成します。生成されたMarkdownは直接編集しません。`docs:build`は生成結果との一致を検査し、古いページが残っている場合は失敗します。これは保存済み定義との整合性の検査であり、上流の新しい定義の自動取得は行いません。
+
 ## 公開設定
 
 Cloudflare Workers Static Assetsで、既存の独自ドメイン `https://pylon.ampoi.dev` に公開します。`wrangler.jsonc` が配信設定です。サーバー側のWorkerコードは使わず、VitePressの生成物 `.vitepress/dist` を配信します。静的アセットの配信と保存はCloudflareの無料枠で運用できます（ドメイン更新料は別途）。

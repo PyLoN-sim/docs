@@ -12,10 +12,10 @@ ros2 topic list | grep docking_ports
 
 | 方向 | Topic | 型 | 内容 |
 |---|---|---|---|
-| 出力 | `/ksp_vessel/docking_ports/<id>/state` | `pylon_interfaces/msg/DockingPortState` | 接続・捕捉・切離し可否とカメラ選択状態。10 Hz、Best Effort |
-| 入力 | `/ksp_vessel/docking_ports/<id>/command` | `pylon_interfaces/msg/DockingPortCommand` | カメラ選択・停止・切離し。Reliable |
-| 出力 | `/ksp_vessel/docking_ports/<id>/camera/image_raw` | `sensor_msgs/msg/Image` | 選択中ポートの320×240、5 Hz、`rgb8`画像 |
-| 出力 | `/ksp_vessel/docking_ports/<id>/camera/camera_info` | `sensor_msgs/msg/CameraInfo` | 垂直FOV 60度のpinhole内部パラメーター |
+| 出力 | `/ksp_vessel/docking_ports/<id>/state` | [`pylon_interfaces/msg/DockingPortState`](/api/interfaces/msg/DockingPortState) | 接続・捕捉・切離し可否とカメラ選択状態。10 Hz、Best Effort |
+| 入力 | `/ksp_vessel/docking_ports/<id>/command` | [`pylon_interfaces/msg/DockingPortCommand`](/api/interfaces/msg/DockingPortCommand) | カメラ選択・停止・切離し。Reliable |
+| 出力 | `/ksp_vessel/docking_ports/<id>/camera/image_raw` | [`sensor_msgs/msg/Image`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/Image.html) | 選択中ポートの320×240、5 Hz、`rgb8`画像 |
+| 出力 | `/ksp_vessel/docking_ports/<id>/camera/camera_info` | [`sensor_msgs/msg/CameraInfo`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/CameraInfo.html) | 垂直FOV 60度のpinhole内部パラメーター |
 
 `state`にはKSPの生のstate文字列に加え、`docked`、`acquiring`、`releasable`、`camera_active`、接続相手の名前とpart IDが入ります。
 

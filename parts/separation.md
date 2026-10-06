@@ -6,8 +6,8 @@ Flight中のactive vesselにある通常・ラジアルデカプラーと手動�
 
 | 方向 | Topic | 型 | QoS |
 |---|---|---|---|
-| 入力 | `/ksp_vessel/actuators/separation/command` | `pylon_interfaces/msg/SeparationCommand` | Reliable / Volatile / depth 10 |
-| 出力 | `/ksp_vessel/actuators/separation/state` | `pylon_interfaces/msg/SeparationState` | Reliable / Transient Local / depth 10 |
+| 入力 | `/ksp_vessel/actuators/separation/command` | [`pylon_interfaces/msg/SeparationCommand`](/api/interfaces/msg/SeparationCommand) | Reliable / Volatile / depth 10 |
+| 出力 | `/ksp_vessel/actuators/separation/state` | [`pylon_interfaces/msg/SeparationState`](/api/interfaces/msg/SeparationState) | Reliable / Transient Local / depth 10 |
 
 IDは`decoupler_<persistentId>_<moduleIndex>`または`fairing_<persistentId>_<moduleIndex>`です。stateの`id`で確認できます。
 

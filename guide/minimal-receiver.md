@@ -24,7 +24,7 @@
 
 ## DockerのJazzyで受信を確認する
 
-[Getting Startedの手順5](getting-started.md#_5-ros2-bridgeを起動する)で`pylon-jazzy`コンテナを起動したまま、別ターミナルで実行します。`hz`は数行確認するたびにCtrl+Cで終了します。
+[Getting Startedの手順4](getting-started.md#start-bridge)で`pylon-jazzy`コンテナを起動したまま、別ターミナルで実行します。`hz`は数行確認するたびにCtrl+Cで終了します。
 
 ```bash
 docker exec pylon-jazzy /pylon-entrypoint.sh ros2 topic echo --once --qos-durability transient_local /pylon/status

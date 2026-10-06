@@ -8,8 +8,8 @@ active vessel内の`ModuleWheelBase`を自動検出し、共有の型付きTopic
 
 | 方向 | Topic | 型 | QoS |
 |---|---|---|---|
-| 入力 | `/ksp_vessel/actuators/wheel/command` | `pylon_interfaces/msg/WheelCommand` | Reliable / depth 10 |
-| 出力 | `/ksp_vessel/actuators/wheel/state` | `pylon_interfaces/msg/WheelState` | Best Effort / depth 10 |
+| 入力 | `/ksp_vessel/actuators/wheel/command` | [`pylon_interfaces/msg/WheelCommand`](/api/interfaces/msg/WheelCommand) | Reliable / depth 10 |
+| 出力 | `/ksp_vessel/actuators/wheel/state` | [`pylon_interfaces/msg/WheelState`](/api/interfaces/msg/WheelState) | Best Effort / depth 10 |
 
 状態はFlight中に30 Hzで送信されます。
 

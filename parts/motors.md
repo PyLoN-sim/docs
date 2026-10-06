@@ -21,10 +21,10 @@
 
 | 方向 | Topic | 型 | 内容 |
 |---|---|---|---|
-| 出力 | `/ksp_vessel/joint_states` | `sensor_msgs/msg/JointState` | position、velocity、effort |
-| 出力 | `/pylon/diagnostics` | `diagnostic_msgs/msg/DiagnosticArray` | 電源・engage・lock・推定電流 |
-| 入力 | `/ksp_vessel/actuators/servo/command` | `pylon_interfaces/msg/MotorCommand` | `id`で指定する型付き指令 |
-| 出力 | `/ksp_vessel/actuators/servo/state` | `pylon_interfaces/msg/MotorState` | `id`付きの型付き状態 |
+| 出力 | `/ksp_vessel/joint_states` | [`sensor_msgs/msg/JointState`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/JointState.html) | position、velocity、effort |
+| 出力 | `/pylon/diagnostics` | [`diagnostic_msgs/msg/DiagnosticArray`](https://docs.ros.org/en/jazzy/p/diagnostic_msgs/msg/DiagnosticArray.html) | 電源・engage・lock・推定電流 |
+| 入力 | `/ksp_vessel/actuators/servo/command` | [`pylon_interfaces/msg/MotorCommand`](/api/interfaces/msg/MotorCommand) | `id`で指定する型付き指令 |
+| 出力 | `/ksp_vessel/actuators/servo/state` | [`pylon_interfaces/msg/MotorState`](/api/interfaces/msg/MotorState) | `id`付きの型付き状態 |
 
 既定ではKSPが状態を20 HzでUDP 49010へ送り、bridgeは受信するたびにROS2へpublishします。ROS2指令はbridgeからUDP 49011へ送られます。
 
@@ -88,7 +88,7 @@ ros2 topic pub --once /ksp_vessel/actuators/servo/command \
 | `locked` | lock状態 |
 | `command_active` | ROS override保持中か |
 
-例のidentityは、先に[機体制御API](/api/vehicle-control)で取得したleaseへ置き換えてください。`MotorCommand`はownerだけが使用できます。ROSモーターはBody Wrenchの配分対象ではありません。timeout後は`command_active`がfalseになり、velocity modeは現在位置のholdへ移ります。position modeの目標位置は保持されます。
+例のidentityは、先に[機体制御API](/api/vehicle-control)で取得したleaseへ置き換えてください。[`MotorCommand`](/api/interfaces/msg/MotorCommand)はownerだけが使用できます。ROSモーターはBody Wrenchの配分対象ではありません。timeout後は`command_active`がfalseになり、velocity modeは現在位置のholdへ移ります。position modeの目標位置は保持されます。
 
 ## DiagnosticStatus
 
@@ -115,7 +115,7 @@ ros2 topic pub --once /ksp_vessel/actuators/servo/command \
 ros2 topic echo /ksp_vessel/actuators/servo/state
 ```
 
-[機体制御API](/api/vehicle-control)でleaseを取得した後、`MotorCommand`で角度を指定します。例は+10°（0.174533 rad）です。identity、ID、sequenceは実際の値へ置き換えてください。
+[機体制御API](/api/vehicle-control)でleaseを取得した後、[`MotorCommand`](/api/interfaces/msg/MotorCommand)で角度を指定します。例は+10°（0.174533 rad）です。identity、ID、sequenceは実際の値へ置き換えてください。
 
 ```bash
 ros2 topic pub --once /ksp_vessel/actuators/servo/command \

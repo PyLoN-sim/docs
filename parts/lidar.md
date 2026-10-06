@@ -6,8 +6,8 @@
 
 | パーツ | 入力Topic | 出力Topic | 型 |
 |---|---|---|---|
-| PyLoN LiDAR 2D | なし | `/ksp_vessel/lidar_2d/<lidar_2d_id>/scan` | `sensor_msgs/msg/LaserScan` |
-| PyLoN LiDAR 3D | なし | `/ksp_vessel/lidar_3d/<lidar_3d_id>/points` | `sensor_msgs/msg/PointCloud2` |
+| PyLoN LiDAR 2D | なし | `/ksp_vessel/lidar_2d/<lidar_2d_id>/scan` | [`sensor_msgs/msg/LaserScan`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/LaserScan.html) |
+| PyLoN LiDAR 3D | なし | `/ksp_vessel/lidar_3d/<lidar_3d_id>/points` | [`sensor_msgs/msg/PointCloud2`](https://docs.ros.org/en/jazzy/p/sensor_msgs/msg/PointCloud2.html) |
 
 ## 2D LaserScan
 
