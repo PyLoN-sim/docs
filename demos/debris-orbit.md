@@ -136,7 +136,7 @@ ros2 topic echo /ksp_vessel/imu/data_raw --field angular_velocity
 
 ## 4. 周回を開始する
 
-ターミナルBで実行します。`--enabled`を指定すると機体の制御を開始します。RCSを有効にし、以降は手動入力・機体切替・時間倍率変更を行わないでください。制御権取得中のSAS抑止はデモの設定で行います。現行APIの共有PyLoN操作権を使用し、指令のcontroller/lease IDとsequenceはbridgeが補完します。
+ターミナルBで実行します。`--enabled`を指定すると機体の制御を開始します。RCSを有効にし、以降は手動入力・機体切替・時間倍率変更を行わないでください。Flight画面の`ROS`ボタンから`ROS2 control ON`を選びます。KSP側がSASを停止し、デモは権限取得・更新・解放Topicを送信しません。指令のcontroller/lease IDとsequenceはbridgeが補完します。既定速度は6 deg/s（約1分/周）です。
 
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -171,11 +171,11 @@ ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/controller_status
 
 搭載カメラの撮影例です。上段左から0〜144度、下段左から180〜324度で、対象を見る方向と背景のKerbinが変わります。この一覧は保存されたPNGを説明用に並べたもので、デモは個別のPNGとJSONを出力します。
 
-画像の時刻と推定角度を照合し、指定角度を通過してから既定2度以内の画像を保存します。`capture_missed`の場合は画像配信の周期と遅延を確認してください。
+画像の時刻と推定角度を照合し、指定角度の前後、既定±2度以内の画像を保存します。画像が航法更新より先に届く場合も、短い履歴で画像時刻を照合します。`capture_missed`の場合は画像配信の周期と遅延を確認してください。
 
 ## 停止と再開
 
-デモのターミナルで`Ctrl-C`を押すと、制御指令をゼロにしてleaseを解放します。終了後にbridgeも`Ctrl-C`で停止できます。
+デモのターミナルで`Ctrl-C`を押すと、制御指令をゼロにします。手動操作へ戻るときはKSPの`ROS2 control OFF`を選びます。終了後にbridgeも`Ctrl-C`で停止できます。
 
 機体切替、制御権喪失、入力欠測後は停止を保持します。IMUが0.5秒を超えて途切れた場合も、機体を安定させてからデモのプロセス全体を起動し直してください。
 
@@ -197,15 +197,21 @@ ros2 topic echo /ksp_vessel/demos/debris_orbit/orbit_a/controller_status
 | `--instance` | `orbit_a` | Topicと撮影ディレクトリの識別名 |
 | `--lidar-sensor-id` / `--camera-sensor-id` | `front_lidar` / `orbit_camera` | 搭載センサーのID |
 | `--orbit-radius` | `15.0` | 周回半径［m］ |
+| `--angular-speed-deg-s` | `6.0` | 角速度［deg/s］、約60秒/周 |
 | `--rviz` | 指定する | RVizを起動 |
 | `--no-controller` | 制御時は指定しない | 推定・表示だけを起動 |
 | `--config` | ソース同梱YAML | 推定・誘導・撮影設定を変更 |
 
-設定ファイルはリポジトリの`../demos/pylon_demo_debris_orbit/config/pylon_demo_debris_orbit.yaml`です。機体への指令と所有権は[機体制御API](../api/vehicle-control.md)、画像の設定は[RGBカメラ](../parts/camera.md)を参照してください。
+設定ファイルはリポジトリの`../demos/pylon_demo_debris_orbit/config/pylon_demo_debris_orbit.yaml`です。機体への指令とKSP側制御ON/OFFは[機体制御API](../api/vehicle-control.md)、画像の設定は[RGBカメラ](../parts/camera.md)を参照してください。
 
 
 ## Python版の構成と実飛行確認
 
 位置・姿勢認識は`debris_orbit/recognition.py`、目標姿勢は`debris_orbit/attitude.py`、目標推力は`debris_orbit/thrust.py`に分かれています。3ノードは通常1つのPythonプロセスで実行します。詳細は[デモREADME](https://github.com/PyLoN-sim/demos/blob/main/pylon_demo_debris_orbit/README.md)を参照してください。
 
-2026-10-06、Linux版KSP 1.12.5・ROS 2 Jazzy・現行PyLoNで、分離済みの軌道上セーブの検証コピーを使って一周と2周目の撮影を確認しました。`front_lidar` / `front_camera`、半径15 m・角速度1 deg/sで推定508度まで進み、36度ごとに15枚保存しました。最大撮影角誤差は0.82度です。約9分後には約1秒のセンサー受信空白で欠測ガードが作動し、停止・制御権返却しました。長時間の無中断運転と、同梱craftの新規読み込み・分離からの手順は未確認です。
+2026-10-06の更新後はKSPの`ROS2 control ON`で権限操作Topicを送らずに実飛行を確認しました。
+半径15 m・目標6 deg/sで一周は約64秒、三周目まで28枚を保存し、二・三周目は各10枚が揃いました。
+最大撮影角誤差は1.99度です。初周にはカメラ受信間隔による2地点の欠番があり、長時間の無中断運転は未確認です。
+別試験で約1秒の入力受信空白による停止保持、KSPのOFF→ONでも自動再開しない動作を確認しました。
+
+従来の1 deg/s設定では、2026-10-06にLinux版KSP 1.12.5・ROS 2 Jazzy・PyLoNで、分離済みの軌道上セーブの検証コピーを使って一周と2周目の撮影を確認しました。`front_lidar` / `front_camera`、半径15 m・角速度1 deg/sで推定508度まで進み、36度ごとに15枚保存しました。最大撮影角誤差は0.82度です。約9分後には約1秒のセンサー受信空白で欠測ガードが作動し、停止・制御権返却しました。長時間の無中断運転と、同梱craftの新規読み込み・分離からの手順は未確認です。
